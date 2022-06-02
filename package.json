@@ -1,0 +1,25 @@
+{
+  "name": "show-log-lines",
+  "version": "1.0.0",
+  "description": "Simple module that shows you where all ytour console.logs are for even better code debugging.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "console",
+    "log",
+    "logger",
+    "show",
+    "location",
+    "line",
+    "file",
+    "caller"
+  ],
+  "author": "Anthony Munegdi <ngurumugz@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "callsites": "^3.1.0",
+    "chalk": "^4.0.0"
+  }
+}
