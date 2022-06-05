@@ -16,28 +16,49 @@ const callsites = require('callsites'),
 	util = require('util'),
 	chalk = require('chalk');
 
-console.log = function () {
-	//log
-	// trace
-	let site = callsites()[1],
-		console_width = process.stdout.columns,
-		divider = chalk.grey('-'.repeat(console_width)),
-		caller = callsites()[2]
-			? `${callsites()[2].getFileName()}:${callsites()[2].getLineNumber()}:${callsites()[0].getColumnNumber()}`
-			: 'Self';
+module.exports = (options = { short: true }) => {
+	console.log = function () {
+		//log
+		// trace
+		let site = callsites()[1],
+			console_width = process.stdout.columns,
+			divider = chalk.grey('-'.repeat(console_width)),
+			caller = callsites()[2]
+				? `${callsites()[2].getFileName()}:${callsites()[2].getLineNumber()}:${callsites()[0].getColumnNumber()}`
+				: 'Self',
+			date = new Date().toLocaleDateString('en-us', {
+				weekday: 'long',
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit',
+			});
 
-	process.stdout.write(`\n\n${divider}\n\n`);
-	process.stdout.write([...arguments].map(util.inspect).join(' '));
+		process.stdout.write(
+			`\n\n${divider.slice(0, -1 * (date.length + 8))} [${chalk.magenta(
+				date
+			)}]\n`
+		);
+		process.stdout.write([...arguments].map(util.inspect).join(' '));
 
-	process.stdout.write(
-		`\n` +
-			chalk.gray.bold(`
-   ${site.getFileName()}:${site.getLineNumber()}:${site.getColumnNumber()}
-    - isToplevel: ${site.isToplevel()}
-    - file: ${site.getFileName()}
-    - line: ${site.getLineNumber()} | column: ${site.getColumnNumber()}
-    - method: ${site.getFunctionName()}\n   caller: ${caller}`)
-	);
+		if (options.short) {
+			process.stdout.write(
+				`\n\n` +
+					chalk.gray(
+						`  ${site.getFileName()}:${site.getLineNumber()}:${site.getColumnNumber()}`
+					)
+			);
+		} else {
+			process.stdout.write(
+				`\n\n` +
+					chalk.gray(
+						`  ${site.getFileName()}:${site.getLineNumber()}:${site.getColumnNumber()}\n  - isToplevel: ${site.isToplevel()}\n  - file: ${site.getFileName()}\n  - line: ${site.getLineNumber()} | column: ${site.getColumnNumber()}\n  - method: ${site.getFunctionName()}\n  - caller: ${caller}`
+					)
+			);
+		}
 
-	process.stdout.write(`\n\n${divider}\n`);
+		process.stdout.write(`\n${divider}\n\n`);
+	};
 };

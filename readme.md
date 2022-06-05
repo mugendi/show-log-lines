@@ -17,7 +17,7 @@ Then require the module at the very top of your project: ```javascript require('
 ```javascript
 
 // require module at the very top
-require('show-log-lines');
+require('show-log-lines')({short:false});
 
 // log something
 console.log("Hello " + test_function())
@@ -34,3 +34,7 @@ function test_function(){
 The code above will output something like this
 
 ![Image](https://repository-images.githubusercontent.com/498966507/cec68530-f673-4727-b4f5-30c9ed41171c)
+
+# Options
+
+The only option passed is ```short``` which is a boolean value. The default is **true** which prints only the line number.
