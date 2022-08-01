@@ -41,7 +41,15 @@ module.exports = (options = { short: true }) => {
 				date
 			)}]\n`
 		);
-		process.stdout.write([...arguments].map(util.inspect).join(' '));
+
+		// to handle frozen objects and arrays that wont render appropriately wit util inspect
+		let args = Array.from(arguments).map(v=>{
+			if(Array.isArray(v)) v = [...v]
+			else if("object" == typeof v) v = {...v};
+			return v;
+		});
+
+		process.stdout.write([...args].map(v=>util.inspect(v,1,Infinity,1)).join(' '));
 
 		if (options.short) {
 			process.stdout.write(
