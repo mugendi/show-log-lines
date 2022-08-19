@@ -37,4 +37,5 @@ The code above will output something like this
 
 # Options
 
-The only option passed is ```short``` which is a boolean value. The default is **true** which prints only the line number.
+- ```short``` : which is a boolean value. The default is **true** which prints only the line number.
+- ```ignorePaths``` : a glob path or list of globs from which paths this module will not decorate the logs. Example:  ```['**/node_modules/moleculer/**']``` will ignore all logs emanating from the moleculer module. [Picomatch](https://www.npmjs.com/package/picomatch) is used to match globs so check out their readme.
