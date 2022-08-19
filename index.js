@@ -14,7 +14,8 @@
 
 const callsites = require('callsites'),
 	util = require('util'),
-	chalk = require('chalk');
+	chalk = require('chalk'),
+	picomatch = require("picomatch");
 
 module.exports = (options = { short: true }) => {
 	console.log = function () {
@@ -35,6 +36,20 @@ module.exports = (options = { short: true }) => {
 				minute: '2-digit',
 				second: '2-digit',
 			});
+
+		// use ignorePaths to ignore logs from specified files
+		if(options.ignorePaths){
+			let paths = Array.isArray(options.ignorePaths) ? options.ignorePaths :[options.ignorePaths];
+			
+			let fileName = site.getFileName();
+			let matches = paths.map(p=>{
+				return picomatch(p);
+			}).filter(isMatch=>{
+				return isMatch(fileName)
+			}).length > 0
+
+			if(matches) return
+		}
 
 		process.stdout.write(
 			`\n\n${divider.slice(0, -1 * (date.length + 8))} [${chalk.magenta(
