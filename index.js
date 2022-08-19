@@ -35,7 +35,10 @@ module.exports = (options = { short: true }) => {
 				hour: '2-digit',
 				minute: '2-digit',
 				second: '2-digit',
-			});
+			}),
+			decorateLog=true;
+
+		
 
 		// use ignorePaths to ignore logs from specified files
 		if(options.ignorePaths){
@@ -48,40 +51,51 @@ module.exports = (options = { short: true }) => {
 				return isMatch(fileName)
 			}).length > 0
 
-			if(matches) return
+			if(matches) {				
+				decorateLog = false
+			}
 		}
 
-		process.stdout.write(
-			`\n\n${divider.slice(0, -1 * (date.length + 8))} [${chalk.magenta(
-				date
-			)}]\n`
-		);
-
-		// to handle frozen objects and arrays that wont render appropriately wit util inspect
-		let args = Array.from(arguments).map(v=>{
-			if(Array.isArray(v)) v = [...v]
-			else if("object" == typeof v) v = {...v};
-			return v;
-		});
-
-		process.stdout.write([...args].map(v=>util.inspect(v,1,Infinity,1)).join(' '));
-
-		if (options.short) {
+		if(decorateLog){
+			
 			process.stdout.write(
-				`\n\n` +
-					chalk.gray(
-						`  ${site.getFileName()}:${site.getLineNumber()}:${site.getColumnNumber()}`
-					)
+				`\n\n${divider.slice(0, -1 * (date.length + 8))} [${chalk.magenta(
+					date
+				)}]\n`
 			);
-		} else {
-			process.stdout.write(
-				`\n\n` +
-					chalk.gray(
-						`  ${site.getFileName()}:${site.getLineNumber()}:${site.getColumnNumber()}\n  - isToplevel: ${site.isToplevel()}\n  - file: ${site.getFileName()}\n  - line: ${site.getLineNumber()} | column: ${site.getColumnNumber()}\n  - method: ${site.getFunctionName()}\n  - caller: ${caller}`
-					)
-			);
+
+			// to handle frozen objects and arrays that wont render appropriately wit util inspect
+			let args = Array.from(arguments).map(v=>{
+				if(Array.isArray(v)) v = [...v]
+				else if("object" == typeof v) v = {...v};
+				return v;
+			});
+
+			process.stdout.write([...args].map(v=>util.inspect(v,1,Infinity,1)).join(' '));
+
+			if (options.short) {
+				process.stdout.write(
+					`\n\n` +
+						chalk.gray(
+							`  ${site.getFileName()}:${site.getLineNumber()}:${site.getColumnNumber()}`
+						)
+				);
+			} else {
+				process.stdout.write(
+					`\n\n` +
+						chalk.gray(
+							`  ${site.getFileName()}:${site.getLineNumber()}:${site.getColumnNumber()}\n  - isToplevel: ${site.isToplevel()}\n  - file: ${site.getFileName()}\n  - line: ${site.getLineNumber()} | column: ${site.getColumnNumber()}\n  - method: ${site.getFunctionName()}\n  - caller: ${caller}`
+						)
+				);
+			}
+
+			process.stdout.write(`\n${divider}\n\n`);
+
+		}
+		else{
+			console.info(...arguments);
 		}
 
-		process.stdout.write(`\n${divider}\n\n`);
+		
 	};
 };
