@@ -1,6 +1,6 @@
 {
   "name": "show-log-lines",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Simple module that shows you where all ytour console.logs are for even better code debugging.",
   "main": "index.js",
   "scripts": {
