@@ -71,7 +71,14 @@ module.exports = (options = { short: true }) => {
 				return v;
 			});
 
-			process.stdout.write([...args].map(v=>util.inspect(v,1,Infinity,1)).join(' '));
+			args = args.map(a=>{
+				if("object"==typeof a){
+					a = util.inspect(a, true,Infinity,true)
+				}
+				return a;
+			})
+
+			process.stdout.write(util.format(...args));
 
 			if (options.short) {
 				process.stdout.write(
