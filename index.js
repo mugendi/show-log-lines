@@ -15,9 +15,23 @@
 const callsites = require('callsites'),
 	util = require('util'),
 	chalk = require('chalk'),
-	picomatch = require("picomatch");
+	picomatch = require('picomatch');
 
-module.exports = (options = { short: true }) => {
+module.exports = (options) => {
+	let defaultOpts = {
+		short: true,
+		utilInspect: {
+			depth: 4,
+			showHidden: false,
+			colors: true,
+			compact: true,
+		},
+	};
+
+	options = Object.assign(options, defaultOpts);
+
+	// console.log(options);
+
 	console.log = function () {
 		//log
 		// trace
@@ -36,47 +50,50 @@ module.exports = (options = { short: true }) => {
 				minute: '2-digit',
 				second: '2-digit',
 			}),
-			decorateLog=true;
-
-		
+			decorateLog = true;
 
 		// use ignorePaths to ignore logs from specified files
-		if(options.ignorePaths){
-			let paths = Array.isArray(options.ignorePaths) ? options.ignorePaths :[options.ignorePaths];
-			
-			let fileName = site.getFileName();
-			let matches = paths.map(p=>{
-				return picomatch(p);
-			}).filter(isMatch=>{
-				return isMatch(fileName)
-			}).length > 0
+		if (options.ignorePaths) {
+			let paths = Array.isArray(options.ignorePaths)
+				? options.ignorePaths
+				: [options.ignorePaths];
 
-			if(matches) {				
-				decorateLog = false
+			let fileName = site.getFileName();
+			let matches =
+				paths
+					.map((p) => {
+						return picomatch(p);
+					})
+					.filter((isMatch) => {
+						return isMatch(fileName);
+					}).length > 0;
+
+			if (matches) {
+				decorateLog = false;
 			}
 		}
 
-		if(decorateLog){
-			
+		if (decorateLog) {
 			process.stdout.write(
-				`\n\n${divider.slice(0, -1 * (date.length + 8))} [${chalk.magenta(
-					date
-				)}]\n`
+				`\n\n${divider.slice(
+					0,
+					-1 * (date.length + 8)
+				)} [${chalk.magenta(date)}]\n`
 			);
 
 			// to handle frozen objects and arrays that wont render appropriately wit util inspect
-			let args = Array.from(arguments).map(v=>{
-				if(Array.isArray(v)) v = [...v]
-				else if("object" == typeof v) v = {...v};
+			let args = Array.from(arguments).map((v) => {
+				if (Array.isArray(v)) v = [...v];
+				else if ('object' == typeof v) v = { ...v };
 				return v;
 			});
 
-			args = args.map(a=>{
-				if("object"==typeof a){
-					a = util.inspect(a, true,Infinity,true)
+			args = args.map((a) => {
+				if ('object' == typeof a) {
+					a = util.inspect(a, options.utilInspect);
 				}
 				return a;
-			})
+			});
 
 			process.stdout.write(util.format(...args));
 
@@ -97,12 +114,8 @@ module.exports = (options = { short: true }) => {
 			}
 
 			process.stdout.write(`\n${divider}\n\n`);
-
-		}
-		else{
+		} else {
 			console.info(...arguments);
 		}
-
-		
 	};
 };
