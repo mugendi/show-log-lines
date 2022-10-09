@@ -17,7 +17,7 @@ const callsites = require('callsites'),
 	chalk = require('chalk'),
 	picomatch = require('picomatch');
 
-module.exports = (options) => {
+module.exports = (options={}) => {
 	let defaultOpts = {
 		short: true,
 		utilInspect: {
